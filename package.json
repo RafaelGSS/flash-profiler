@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node lib/index.js",
     "prebuild": "node-gyp configure",
-    "build": "node-gyp build"
+    "build": "node-gyp build",
+    "test": "node --napi-modules ./tests/binding.test.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,7 @@
     "nodejs"
   ],
   "dependencies": {
-    "node-addon-api": "^1.1.0"
+    "node-addon-api": "^4.3.0"
   },
   "author": "",
   "license": "MIT",

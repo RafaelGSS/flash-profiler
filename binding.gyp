@@ -1,7 +1,7 @@
 {
   'targets': [
     {
-      'target_name': 'napi-native',
+      'target_name': 'profiler',
       'sources': [ 'src/profiler.cc' ],
       'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
