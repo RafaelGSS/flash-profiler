@@ -3,8 +3,11 @@
   "version": "0.0.0-beta.0",
   "description": "",
   "main": "index.js",
+  "gypfile": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node lib/index.js",
+    "prebuild": "node-gyp configure",
+    "build": "node-gyp build"
   },
   "repository": {
     "type": "git",
@@ -14,6 +17,9 @@
     "profiler",
     "nodejs"
   ],
+  "dependencies": {
+    "node-addon-api": "^1.1.0"
+  },
   "author": "",
   "license": "MIT",
   "bugs": {
