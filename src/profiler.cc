@@ -11,7 +11,7 @@ v8::CpuProfiler* cpuProfiler;
 Boolean StartProfiling(const CallbackInfo& info) {
   Env env = info.Env();
   cpuProfiler = v8::CpuProfiler::New(v8::Isolate::GetCurrent());
-  Local<v8::String> name = v8::MaybeLocal<v8::String>("prof-test");
+  Local<v8::String> name = v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "prof-test").ToLocalChecked();
 
   cpuProfiler->SetSamplingInterval(1000);
   cpuProfiler->StartProfiling(name, v8::CpuProfilingMode::kCallerLineNumbers);
@@ -26,8 +26,9 @@ Object StopProfiling(const CallbackInfo& info) {
     throw Napi::Error::New(env, "StartProfiling should be called first.");
   }
 
-  v8::CpuProfile* profile = cpuProfiler->StopProfiling("prof-test");
-  v8::Local<String> functionName = profile->GetTopDownRoot()->GetFunctionName();
+  Local<v8::String> name = v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "prof-test").ToLocalChecked();
+  v8::CpuProfile* profile = cpuProfiler->StopProfiling(name);
+  const char* functionName = profile->GetTopDownRoot()->GetFunctionNameStr();
 
   Object profilingData = Object::New(env);
   profilingData.Set("functionName", functionName);
@@ -36,7 +37,7 @@ Object StopProfiling(const CallbackInfo& info) {
   cpuProfiler->Dispose();
   cpuProfiler = NULL;
 
-  return profilingData
+  return profilingData;
 }
 
 Object Init(Env env, Object exports) {
