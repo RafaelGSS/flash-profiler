@@ -19,6 +19,33 @@ Boolean StartProfiling(const CallbackInfo& info) {
   return Boolean::New(env, true);
 }
 
+Object CreateTimeNode(Env env, String name, String scriptName, Number scriptId, Number lineNumber, Number columnNumber, Number hitCount, Array children) {
+  Object node = Object::New(env);
+  node.Set("name", name);
+  node.Set("scriptName", scriptName);
+  node.Set("scriptId", scriptId);
+  node.Set("lineNumber", lineNumber);
+  node.Set("columnNumber", columnNumber);
+  node.Set("hitCount", hitCount);
+  node.Set("children", children);
+
+  return node;
+}
+
+Local<Value> TranslateTimeProfileNode(Env env, const CpuProfileNode* node) {
+  int32_t count = node->GetChildrenCount();
+  Local<v8::Array> children = Array::New(env, count);
+  for (int32_t i = 0; i < count; i++) {
+    children.set(i, TranslateTimeProfileNode(node->GetChild(i)));
+  }
+
+  return CreateTimeNode(env, node->GetFunctionName(), node->GetScriptResourceName(),
+                        Number::New(node->GetScriptId()),
+                        Number::New(node->GetLineNumber()),
+                        Number::New(node->GetColumnNumber()),
+                        Number::New(node->GetHitCount()), children);
+}
+
 Object StopProfiling(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -28,10 +55,12 @@ Object StopProfiling(const CallbackInfo& info) {
 
   Local<v8::String> name = v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "prof-test").ToLocalChecked();
   v8::CpuProfile* profile = cpuProfiler->StopProfiling(name);
-  const char* functionName = profile->GetTopDownRoot()->GetFunctionNameStr();
 
   Object profilingData = Object::New(env);
-  profilingData.Set("functionName", functionName);
+  profilingData.Set("title", profile->GetTitle());
+  profilingData.Set("startTime", profile->GetStartTime());
+  profilingData.Set("endTime", profile->GetEndTime());
+  profilingData.Set("topDownRoot", TranslateTimeProfileNode(profile->GetTopDownRoot()));
 
   profile->Delete();
   cpuProfiler->Dispose();
