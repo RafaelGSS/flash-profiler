@@ -19,31 +19,45 @@ Boolean StartProfiling(const CallbackInfo& info) {
   return Boolean::New(env, true);
 }
 
-Object CreateTimeNode(Env env, String name, String scriptName, Number scriptId, Number lineNumber, Number columnNumber, Number hitCount, Array children) {
+Object CreateTimeNode(
+    Env env,
+    Local<v8::String> name,
+    Local<v8::String> scriptName,
+    int scriptId,
+    int lineNumber,
+    int columnNumber,
+    int hitCount,
+    Array children
+) {
   Object node = Object::New(env);
-  node.Set("name", name);
-  node.Set("scriptName", scriptName);
-  node.Set("scriptId", scriptId);
-  node.Set("lineNumber", lineNumber);
-  node.Set("columnNumber", columnNumber);
-  node.Set("hitCount", hitCount);
-  node.Set("children", children);
+  /* node.Set("name", name); */
+  /* node.Set("scriptName", scriptName); */
+  /* node.Set("scriptId", scriptId); */
+  /* node.Set("lineNumber", lineNumber); */
+  /* node.Set("columnNumber", columnNumber); */
+  /* node.Set("hitCount", hitCount); */
+  /* node.Set("children", children); */
 
   return node;
 }
 
-Local<Value> TranslateTimeProfileNode(Env env, const CpuProfileNode* node) {
+Object TranslateTimeProfileNode(Env env, const v8::CpuProfileNode* node) {
   int32_t count = node->GetChildrenCount();
-  Local<v8::Array> children = Array::New(env, count);
+  Array children = Array::New(env, count);
   for (int32_t i = 0; i < count; i++) {
-    children.set(i, TranslateTimeProfileNode(node->GetChild(i)));
+    children.Set(i, TranslateTimeProfileNode(env, node->GetChild(i)));
   }
 
-  return CreateTimeNode(env, node->GetFunctionName(), node->GetScriptResourceName(),
-                        Number::New(node->GetScriptId()),
-                        Number::New(node->GetLineNumber()),
-                        Number::New(node->GetColumnNumber()),
-                        Number::New(node->GetHitCount()), children);
+  return CreateTimeNode(
+      env,
+      node->GetFunctionName(),
+      node->GetScriptResourceName(),
+      node->GetScriptId(),
+      node->GetLineNumber(),
+      node->GetColumnNumber(),
+      node->GetHitCount(),
+      children
+  );
 }
 
 Object StopProfiling(const CallbackInfo& info) {
@@ -57,10 +71,10 @@ Object StopProfiling(const CallbackInfo& info) {
   v8::CpuProfile* profile = cpuProfiler->StopProfiling(name);
 
   Object profilingData = Object::New(env);
-  profilingData.Set("title", profile->GetTitle());
-  profilingData.Set("startTime", profile->GetStartTime());
-  profilingData.Set("endTime", profile->GetEndTime());
-  profilingData.Set("topDownRoot", TranslateTimeProfileNode(profile->GetTopDownRoot()));
+  /* profilingData.Set("title", profile->GetTitle()); */
+  /* profilingData.Set("startTime", profile->GetStartTime()); */
+  /* profilingData.Set("endTime", profile->GetEndTime()); */
+  /* profilingData.Set("topDownRoot", TranslateTimeProfileNode(env, profile->GetTopDownRoot())); */
 
   profile->Delete();
   cpuProfiler->Dispose();
