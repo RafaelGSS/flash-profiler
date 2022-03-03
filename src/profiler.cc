@@ -32,11 +32,11 @@ Object CreateTimeNode(
   Object node = Object::New(env);
   /* node.Set("name", name); */
   /* node.Set("scriptName", scriptName); */
-  /* node.Set("scriptId", scriptId); */
-  /* node.Set("lineNumber", lineNumber); */
-  /* node.Set("columnNumber", columnNumber); */
-  /* node.Set("hitCount", hitCount); */
-  /* node.Set("children", children); */
+  node.Set("scriptId", scriptId);
+  node.Set("lineNumber", lineNumber);
+  node.Set("columnNumber", columnNumber);
+  node.Set("hitCount", hitCount);
+  node.Set("children", children);
 
   return node;
 }
@@ -74,7 +74,7 @@ Object StopProfiling(const CallbackInfo& info) {
   /* profilingData.Set("title", profile->GetTitle()); */
   /* profilingData.Set("startTime", profile->GetStartTime()); */
   /* profilingData.Set("endTime", profile->GetEndTime()); */
-  /* profilingData.Set("topDownRoot", TranslateTimeProfileNode(env, profile->GetTopDownRoot())); */
+  profilingData.Set("topDownRoot", TranslateTimeProfileNode(env, profile->GetTopDownRoot()));
 
   profile->Delete();
   cpuProfiler->Dispose();
