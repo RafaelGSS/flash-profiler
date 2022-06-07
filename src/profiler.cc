@@ -30,8 +30,8 @@ Object CreateTimeNode(
     Array children
 ) {
   Object node = Object::New(env);
-  /* node.Set("name", name); */
-  /* node.Set("scriptName", scriptName); */
+  node.Set("name", *v8::String::Utf8Value(v8::Isolate::GetCurrent(), name));
+  node.Set("scriptName", *v8::String::Utf8Value(v8::Isolate::GetCurrent(), scriptName));
   node.Set("scriptId", scriptId);
   node.Set("lineNumber", lineNumber);
   node.Set("columnNumber", columnNumber);
@@ -71,9 +71,9 @@ Object StopProfiling(const CallbackInfo& info) {
   v8::CpuProfile* profile = cpuProfiler->StopProfiling(name);
 
   Object profilingData = Object::New(env);
-  /* profilingData.Set("title", profile->GetTitle()); */
-  /* profilingData.Set("startTime", profile->GetStartTime()); */
-  /* profilingData.Set("endTime", profile->GetEndTime()); */
+  profilingData.Set("title", *v8::String::Utf8Value(v8::Isolate::GetCurrent(), profile->GetTitle()));
+  profilingData.Set("startTime", profile->GetStartTime());
+  profilingData.Set("endTime", profile->GetEndTime());
   profilingData.Set("topDownRoot", TranslateTimeProfileNode(env, profile->GetTopDownRoot()));
 
   profile->Delete();
