@@ -19,6 +19,15 @@ Boolean StartProfiling(const CallbackInfo& info) {
   return Boolean::New(env, true);
 }
 
+Object ParseDeoptInfo(Env env, std::vector<v8::CpuProfileDeoptInfo> deopts) {
+  Object deoptInfo = Object::New(env);
+  for (auto deopt : deopts) {
+    deoptInfo.Set("reason", deopt.deopt_reason);
+  }
+
+  return deoptInfo;
+}
+
 Object CreateTimeNode(
     Env env,
     Local<v8::String> name,
@@ -27,6 +36,7 @@ Object CreateTimeNode(
     int lineNumber,
     int columnNumber,
     int hitCount,
+    std::vector<v8::CpuProfileDeoptInfo> deopts,
     Array children
 ) {
   Object node = Object::New(env);
@@ -37,9 +47,13 @@ Object CreateTimeNode(
   node.Set("columnNumber", columnNumber);
   node.Set("hitCount", hitCount);
   node.Set("children", children);
+  if (deopts.size()) {
+    node.Set("deopt", ParseDeoptInfo(env, deopts));
+  }
 
   return node;
 }
+
 
 Object TranslateTimeProfileNode(Env env, const v8::CpuProfileNode* node) {
   int32_t count = node->GetChildrenCount();
@@ -56,6 +70,7 @@ Object TranslateTimeProfileNode(Env env, const v8::CpuProfileNode* node) {
       node->GetLineNumber(),
       node->GetColumnNumber(),
       node->GetHitCount(),
+      node->GetDeoptInfos(),
       children
   );
 }
