@@ -38,3 +38,5 @@ node_modules/
 package-lock.json
 
 tags
+
+.nyc_output/
