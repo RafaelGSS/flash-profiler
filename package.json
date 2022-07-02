@@ -1,14 +1,16 @@
 {
   "name": "flash-profiler",
   "version": "0.0.0",
-  "description": "",
+  "description": "A Lightweight profiler for Node.js",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "gypfile": true,
   "scripts": {
-    "start": "node lib/index.js",
     "prebuild": "node-gyp configure",
     "build": "node-gyp build",
-    "test": "node --napi-modules ./tests/binding.test.js"
+    "test": "tap ./tests/*.test.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -21,10 +23,18 @@
   "dependencies": {
     "node-addon-api": "^4.3.0"
   },
-  "author": "",
+  "author": "RafaelGSS",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/RafaelGSS/flash-profiler/issues"
   },
-  "homepage": "https://github.com/RafaelGSS/flash-profiler#readme"
+  "homepage": "https://github.com/RafaelGSS/flash-profiler#readme",
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.3",
+    "eslint-plugin-promise": "^6.0.0",
+    "tap": "^16.3.0"
+  }
 }
